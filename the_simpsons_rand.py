@@ -1,14 +1,22 @@
+# selenium for browsing
 import selenium
 from selenium import webdriver as wd
+# time for delays
 import time
+# random for generating season/episode numbers
 from random import randint
 
+# flag for run number
 i = 0
 # open firefox
 b = wd.Firefox()
+
+# keep doing until ends
 try:
     while(1):
-        season_num = randint(1, 10)
+        # generate random season number
+        season_num = randint(2, 10)
+        # go to the pages of the seasons with the list of the episodes
         # problem with 2nd season: needs 'episode' instead of 'episodes' in url
         if (season_num == 2):
             season_url = 'http://watchcartoonsonline.eu/watch-the-simpsons-season-' + str(season_num) + '-full-episode-online-free/'
@@ -19,16 +27,21 @@ try:
         b.get(season_url)
         # keep trying to close the popup
         # only for first time going to the site (first episode)
-        if (i == 0): 
+        start = time.time()
+        
+        if (i == 0):
+            raw_input('Press Enter to continue') 
+            i = 1
+        '''
             # wait for the popup to come
-            time.sleep(10)
-            while(1):
+            while(time.time() < 20):
                 try:
                     b.find_element_by_class_name('spu-icon-close').click()
                     i = 1
                     break
                 except:
                     pass
+        '''
         
         # get a list of the links to the episodes
         # the first one is redundant
@@ -45,12 +58,15 @@ try:
         b.maximize_window()
         # find the play button (should only be 1) and click it
         b.find_elements_by_class_name('jw-icon-display')[0].click()
-# 
-#         # sleep for the episode to complete
-#         time.sleep(30*60)
 
-        raw_input('Press Enter to go to next episode')
+        # stop looping if Ctrl+C or 'e'
+        if (raw_input('Press Enter to go to next episode or \'e\' to end ') == 'e'):
+            break
+
+# catch Ctrl+C
 except KeyboardInterrupt:
-    # close the browser
-    b.quit()
+    pass
+
+# close the browser
+b.quit()
 
